@@ -98,18 +98,33 @@ export default function AdminPosts() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">대표 이미지 URL</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">대표 이미지</label>
               <div className="flex space-x-2">
                 <input 
                   type="url" 
                   value={currentPost?.image}
                   onChange={(e) => setCurrentPost({...currentPost, image: e.target.value})}
-                  className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                  placeholder="https://..."
+                  className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                  placeholder="이미지 URL을 입력하거나 파일을 선택하세요"
                 />
-                <button type="button" className="px-4 py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors flex items-center">
+                <label className="px-4 py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors flex items-center cursor-pointer">
                   <ImageIcon size={20} />
-                </button>
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setCurrentPost({ ...currentPost, image: reader.result as string });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
               </div>
               {currentPost?.image && (
                 <div className="mt-4 aspect-video rounded-xl overflow-hidden border border-gray-100">

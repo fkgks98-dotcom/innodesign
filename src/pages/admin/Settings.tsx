@@ -136,16 +136,36 @@ export default function AdminSettings() {
                     히어로 섹션 배경 이미지
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">배경 이미지 URL</label>
-                      <input 
-                        type="url" 
-                        value={homeData.hero.bgImage}
-                        onChange={(e) => setHomeData({...homeData, hero: {...homeData.hero, bgImage: e.target.value}})}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
-                        placeholder="https://images.unsplash.com/..."
-                      />
-                      <p className="mt-2 text-xs text-gray-500">고해상도 이미지(1920x1080 이상) 사용을 권장합니다.</p>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">배경 이미지 URL</label>
+                        <input 
+                          type="url" 
+                          value={homeData.hero.bgImage}
+                          onChange={(e) => setHomeData({...homeData, hero: {...homeData.hero, bgImage: e.target.value}})}
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                          placeholder="https://images.unsplash.com/..."
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">내 컴퓨터에서 사진 선택</label>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setHomeData({...homeData, hero: {...homeData.hero, bgImage: reader.result as string}});
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500">URL을 직접 입력하거나 컴퓨터에서 이미지를 업로드할 수 있습니다.</p>
                     </div>
                     <div className="aspect-video rounded-2xl overflow-hidden border border-gray-100 shadow-inner bg-gray-50">
                       <img src={homeData.hero.bgImage} alt="Hero Preview" className="w-full h-full object-cover" />

@@ -96,17 +96,36 @@ export default function HomeEditor() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">배경 이미지 URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">배경 이미지</label>
             <div className="space-y-4">
-              <div className="flex space-x-2">
+              <div className="flex flex-col space-y-2">
                 <input 
                   type="text" 
                   value={data.hero.bgImage}
                   onChange={(e) => setData({...data, hero: {...data.hero, bgImage: e.target.value}})}
-                  className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  placeholder="이미지 URL 입력"
                 />
-                <div className="p-3 bg-gray-100 rounded-xl text-gray-400">
-                  <ImageIcon size={20} />
+                <div className="flex items-center space-x-2">
+                  <label className="flex-1 flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer text-sm font-medium">
+                    <ImageIcon size={18} className="mr-2" />
+                    내 컴퓨터에서 선택
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setData({...data, hero: {...data.hero, bgImage: reader.result as string}});
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
                 </div>
               </div>
               <div className="aspect-video rounded-2xl overflow-hidden border border-gray-100">
@@ -152,14 +171,34 @@ export default function HomeEditor() {
           </div>
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">소개 이미지 URL</label>
-              <div className="flex space-x-2 mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">소개 이미지</label>
+              <div className="flex flex-col space-y-4 mb-4">
                 <input 
                   type="text" 
                   value={data.about.image}
                   onChange={(e) => setData({...data, about: {...data.about, image: e.target.value}})}
-                  className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  placeholder="이미지 URL 입력"
                 />
+                <label className="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer text-sm font-medium">
+                  <ImageIcon size={18} className="mr-2" />
+                  내 컴퓨터에서 선택
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setData({...data, about: {...data.about, image: reader.result as string}});
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
               </div>
               <div className="h-48 rounded-2xl overflow-hidden border border-gray-100">
                 <img src={data.about.image} alt="Preview" className="w-full h-full object-cover" />
