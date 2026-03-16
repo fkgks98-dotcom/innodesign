@@ -20,10 +20,8 @@ export default function Layout() {
 
             {/* 데스크탑 네비게이션 */}
             <nav className="hidden md:flex space-x-8">
-              <a href="#about" className="text-gray-600 hover:text-primary transition-colors">회사소개</a>
-              <a href="#projects" className="text-gray-600 hover:text-primary transition-colors">프로젝트</a>
-              <a href="#services" className="text-gray-600 hover:text-primary transition-colors">서비스</a>
-              <a href="#contact" className="text-gray-600 hover:text-primary transition-colors">문의하기</a>
+              <Link to="/projects" className="text-gray-600 hover:text-primary transition-colors">PROJECTS</Link>
+              <a href="#contact" className="text-gray-600 hover:text-primary transition-colors">CONTACT</a>
             </nav>
 
             {/* 소셜 및 관리자 링크 */}
@@ -50,11 +48,9 @@ export default function Layout() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-b border-gray-100">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <a href="#about" className="block px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md">회사소개</a>
-              <a href="#projects" className="block px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md">프로젝트</a>
-              <a href="#services" className="block px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md">서비스</a>
-              <a href="#contact" className="block px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md">문의하기</a>
-              <Link to="/admin" className="block px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md">관리자 대시보드</Link>
+              <Link to="/projects" className="block px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md" onClick={() => setIsMenuOpen(false)}>PROJECTS</Link>
+              <a href="#contact" className="block px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md" onClick={() => setIsMenuOpen(false)}>CONTACT</a>
+              <Link to="/admin" className="block px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md" onClick={() => setIsMenuOpen(false)}>ADMIN</Link>
             </div>
           </div>
         )}

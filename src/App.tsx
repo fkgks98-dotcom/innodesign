@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
+import Projects from './pages/Projects';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminPosts from './pages/admin/Posts';
 import AdminHomeEditor from './pages/admin/HomeEditor';
@@ -21,6 +22,7 @@ export default function App() {
         {/* 사용자 뷰 (메인 홈페이지) */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="projects" element={<Projects />} />
         </Route>
 
         {/* 관리자 로그인 */}
