@@ -1,9 +1,20 @@
 import { Users, FileText, Eye, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
+  const [postCount, setPostCount] = useState(0);
+
+  useEffect(() => {
+    const savedPosts = localStorage.getItem('admin_posts');
+    if (savedPosts) {
+      setPostCount(JSON.parse(savedPosts).length);
+    }
+  }, []);
+
   const stats = [
     { label: '총 방문자 수', value: '12,450', change: '+12%', icon: <Users size={24} className="text-blue-500" /> },
-    { label: '전체 게시글', value: '145', change: '+3', icon: <FileText size={24} className="text-green-500" /> },
+    { label: '전체 게시글', value: postCount.toString(), change: '+3', icon: <FileText size={24} className="text-green-500" /> },
     { label: '오늘의 조회수', value: '842', change: '+5%', icon: <Eye size={24} className="text-purple-500" /> },
     { label: '신규 문의', value: '12', change: '-2', icon: <TrendingUp size={24} className="text-orange-500" /> },
   ];
@@ -30,6 +41,37 @@ export default function AdminDashboard() {
             <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
           </div>
         ))}
+      </div>
+
+      {/* 퀵 액션 */}
+      <div className="bg-primary/5 p-8 rounded-3xl border border-primary/10">
+        <h2 className="text-lg font-bold text-gray-900 mb-6">빠른 작업</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Link 
+            to="/admin/posts" 
+            className="flex items-center p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary hover:shadow-md transition-all group"
+          >
+            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mr-4 group-hover:bg-primary group-hover:text-white transition-colors">
+              <FileText size={24} />
+            </div>
+            <div>
+              <div className="font-bold text-gray-900">새 게시물 올리기</div>
+              <div className="text-sm text-gray-500">시공 사례를 새로 등록합니다.</div>
+            </div>
+          </Link>
+          <Link 
+            to="/admin/home-editor" 
+            className="flex items-center p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary hover:shadow-md transition-all group"
+          >
+            <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mr-4 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+              <Eye size={24} />
+            </div>
+            <div>
+              <div className="font-bold text-gray-900">홈페이지 수정하기</div>
+              <div className="text-sm text-gray-500">메인 화면의 내용을 변경합니다.</div>
+            </div>
+          </Link>
+        </div>
       </div>
 
       {/* 최근 활동 및 알림 영역 */}

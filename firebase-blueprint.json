@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "Post": {
+      "title": "Portfolio Post",
+      "description": "A portfolio item or news post",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Title of the post" },
+        "description": { "type": "string", "description": "Detailed description" },
+        "imageUrl": { "type": "string", "description": "URL of the image" },
+        "category": { "type": "string", "description": "Category like 'Interior', 'Architecture'" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["title", "description", "imageUrl", "createdAt"]
+    },
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "Global settings for the website",
+      "type": "object",
+      "properties": {
+        "heroTitle": { "type": "string", "description": "Main title on the home page" },
+        "heroSubtitle": { "type": "string", "description": "Subtitle on the home page" },
+        "contactEmail": { "type": "string", "description": "Contact email address" },
+        "contactPhone": { "type": "string", "description": "Contact phone number" },
+        "address": { "type": "string", "description": "Office address" }
+      }
+    }
+  },
+  "firestore": {
+    "posts": {
+      "schema": "Post",
+      "description": "Collection of portfolio items"
+    },
+    "settings": {
+      "schema": "SiteSettings",
+      "description": "Global site configuration"
+    }
+  }
+}

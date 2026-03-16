@@ -1,7 +1,9 @@
 import { motion } from 'motion/react';
 import { ArrowRight, CheckCircle2, Star, Quote } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { DEFAULT_HOME_DATA } from '../constants';
 
-// 샘플 데이터
+// 샘플 데이터 (게시물은 나중에 동적 처리 가능)
 const PROJECT_ITEMS = [
   {
     id: 1,
@@ -57,13 +59,31 @@ const SERVICES = [
 ];
 
 export default function Home() {
+  const [data, setData] = useState(DEFAULT_HOME_DATA);
+  const [projects, setProjects] = useState(PROJECT_ITEMS);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('home_data');
+    if (savedData) {
+      setData(JSON.parse(savedData));
+    }
+    
+    const savedPosts = localStorage.getItem('admin_posts');
+    if (savedPosts) {
+      const publishedPosts = JSON.parse(savedPosts).filter((p: any) => p.status === '발행됨');
+      if (publishedPosts.length > 0) {
+        setProjects(publishedPosts);
+      }
+    }
+  }, []);
+
   return (
     <div className="w-full">
       {/* 히어로 섹션 */}
       <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
+            src={data.hero.bgImage} 
             alt="Hero Background" 
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
@@ -78,7 +98,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight leading-tight uppercase whitespace-nowrap"
           >
-            INNOVATION IN SPACE
+            {data.hero.title}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 30 }}
@@ -86,7 +106,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-3xl text-gray-200 mb-10 font-light"
           >
-            공간에 혁신을 담아내다
+            {data.hero.subtitle}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -97,7 +117,7 @@ export default function Home() {
               href="#contact" 
               className="inline-flex items-center px-8 py-4 bg-primary text-white text-lg font-medium rounded-full hover:bg-primary-dark transition-colors shadow-lg hover:shadow-xl"
             >
-              무료 상담 신청하기
+              {data.hero.buttonText}
               <ArrowRight className="ml-2 w-5 h-5" />
             </a>
           </motion.div>
@@ -114,26 +134,21 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-sm font-bold text-primary tracking-widest uppercase mb-3">About Us</h2>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
-                10년의 노하우,<br />
-                신뢰할 수 있는 인테리어 파트너
+              <h2 className="text-sm font-bold text-primary tracking-widest uppercase mb-3">{data.about.title}</h2>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight whitespace-pre-line">
+                {data.about.heading}
               </h3>
               <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-                단순히 보기 좋은 공간을 넘어, 그곳에 머무는 사람의 삶을 이해하고 
-                편안함을 주는 공간을 설계합니다. 수많은 프로젝트를 통해 검증된 
-                실력과 투명한 견적 시스템으로 고객님께 최고의 만족을 선사합니다.
+                {data.about.description}
               </p>
               
               <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">500+</div>
-                  <div className="text-gray-500 font-medium">프로젝트 완료</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">98%</div>
-                  <div className="text-gray-500 font-medium">고객 만족도</div>
-                </div>
+                {data.about.stats.map((stat, idx) => (
+                  <div key={idx}>
+                    <div className="text-4xl font-bold text-gray-900 mb-2">{stat.value}</div>
+                    <div className="text-gray-500 font-medium">{stat.label}</div>
+                  </div>
+                ))}
               </div>
             </motion.div>
             
@@ -145,7 +160,7 @@ export default function Home() {
               className="relative"
             >
               <img 
-                src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                src={data.about.image} 
                 alt="Interior Design Process" 
                 className="rounded-2xl shadow-2xl object-cover h-[500px] w-full"
                 referrerPolicy="no-referrer"
@@ -175,7 +190,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {PROJECT_ITEMS.map((item, index) => (
+            {projects.map((item, index) => (
               <motion.div 
                 key={item.id}
                 initial={{ opacity: 0, y: 30 }}

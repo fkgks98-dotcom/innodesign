@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 
 // 샘플 데이터
@@ -10,9 +10,23 @@ const INITIAL_POSTS = [
 ];
 
 export default function AdminPosts() {
-  const [posts, setPosts] = useState(INITIAL_POSTS);
+  const [posts, setPosts] = useState<any[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentPost, setCurrentPost] = useState<any>(null);
+
+  useEffect(() => {
+    const savedPosts = localStorage.getItem('admin_posts');
+    if (savedPosts) {
+      setPosts(JSON.parse(savedPosts));
+    } else {
+      setPosts(INITIAL_POSTS);
+    }
+  }, []);
+
+  const saveToLocalStorage = (newPosts: any[]) => {
+    setPosts(newPosts);
+    localStorage.setItem('admin_posts', JSON.stringify(newPosts));
+  };
 
   const handleEdit = (post: any) => {
     setCurrentPost(post);
@@ -20,23 +34,26 @@ export default function AdminPosts() {
   };
 
   const handleCreate = () => {
-    setCurrentPost({ title: '', category: '주거공간', content: '', image: '' });
+    setCurrentPost({ title: '', category: '주거공간', content: '', image: '', status: '발행됨' });
     setIsEditing(true);
   };
 
   const handleDelete = (id: number) => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
-      setPosts(posts.filter(p => p.id !== id));
+      const newPosts = posts.filter(p => p.id !== id);
+      saveToLocalStorage(newPosts);
     }
   };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    let newPosts;
     if (currentPost.id) {
-      setPosts(posts.map(p => p.id === currentPost.id ? { ...p, ...currentPost } : p));
+      newPosts = posts.map(p => p.id === currentPost.id ? { ...p, ...currentPost } : p);
     } else {
-      setPosts([{ ...currentPost, id: Date.now(), date: new Date().toISOString().split('T')[0], status: '발행됨' }, ...posts]);
+      newPosts = [{ ...currentPost, id: Date.now(), date: new Date().toISOString().split('T')[0] }, ...posts];
     }
+    saveToLocalStorage(newPosts);
     setIsEditing(false);
   };
 
@@ -94,6 +111,11 @@ export default function AdminPosts() {
                   <ImageIcon size={20} />
                 </button>
               </div>
+              {currentPost?.image && (
+                <div className="mt-4 aspect-video rounded-xl overflow-hidden border border-gray-100">
+                  <img src={currentPost.image} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
             </div>
           </div>
 

@@ -1,16 +1,25 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Settings, LogOut, Menu, X, Home } from 'lucide-react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, FileText, Settings, LogOut, Menu, X, Home, Edit3 } from 'lucide-react';
 import { useState } from 'react';
 
 export default function AdminLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
     { path: '/admin', icon: <LayoutDashboard size={20} />, label: '대시보드' },
     { path: '/admin/posts', icon: <FileText size={20} />, label: '게시글 관리' },
+    { path: '/admin/home-editor', icon: <Edit3 size={20} />, label: '홈페이지 수정' },
     { path: '/admin/settings', icon: <Settings size={20} />, label: '설정' },
   ];
+
+  const handleLogout = () => {
+    if (window.confirm('로그아웃 하시겠습니까?')) {
+      sessionStorage.removeItem('admin_auth');
+      navigate('/admin/login');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans">
@@ -60,7 +69,10 @@ export default function AdminLayout() {
             <Home size={20} />
             <span className="font-medium">홈페이지로 이동</span>
           </Link>
-          <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-400 hover:bg-red-400/10 rounded-xl transition-colors">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-3 px-4 py-3 text-red-400 hover:bg-red-400/10 rounded-xl transition-colors"
+          >
             <LogOut size={20} />
             <span className="font-medium">로그아웃</span>
           </button>
