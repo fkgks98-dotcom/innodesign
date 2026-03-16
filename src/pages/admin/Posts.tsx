@@ -99,38 +99,63 @@ export default function AdminPosts() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">대표 이미지</label>
-              <div className="flex space-x-2">
-                <input 
-                  type="url" 
-                  value={currentPost?.image}
-                  onChange={(e) => setCurrentPost({...currentPost, image: e.target.value})}
-                  className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
-                  placeholder="이미지 URL을 입력하거나 파일을 선택하세요"
-                />
-                <label className="px-4 py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors flex items-center cursor-pointer">
-                  <ImageIcon size={20} />
+              <div className="space-y-4">
+                <div className="flex space-x-2">
                   <input 
-                    type="file" 
-                    className="hidden" 
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setCurrentPost({ ...currentPost, image: reader.result as string });
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
+                    type="url" 
+                    value={currentPost?.image || ''}
+                    onChange={(e) => setCurrentPost({...currentPost, image: e.target.value})}
+                    className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                    placeholder="이미지 URL을 직접 입력하거나 아래 버튼을 사용하세요"
                   />
-                </label>
-              </div>
-              {currentPost?.image && (
-                <div className="mt-4 aspect-video rounded-xl overflow-hidden border border-gray-100">
-                  <img src={currentPost.image} alt="Preview" className="w-full h-full object-cover" />
                 </div>
-              )}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="flex flex-col items-center justify-center p-6 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group">
+                    <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <ImageIcon size={24} className="text-gray-400 group-hover:text-primary" />
+                    </div>
+                    <span className="text-sm font-bold text-gray-700">내 컴퓨터에서 사진 선택</span>
+                    <span className="text-xs text-gray-500 mt-1">JPG, PNG, GIF (최대 5MB)</span>
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setCurrentPost({ ...currentPost, image: reader.result as string });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+
+                  <div className="relative aspect-video rounded-2xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center">
+                    {currentPost?.image ? (
+                      <>
+                        <img src={currentPost.image} alt="Preview" className="w-full h-full object-cover" />
+                        <button 
+                          type="button"
+                          onClick={() => setCurrentPost({...currentPost, image: ''})}
+                          className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                          title="이미지 제거"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </>
+                    ) : (
+                      <div className="text-center p-4">
+                        <ImageIcon size={32} className="mx-auto text-gray-300 mb-2" />
+                        <p className="text-xs text-gray-400">이미지 미리보기</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -107,9 +107,9 @@ export default function HomeEditor() {
                   placeholder="이미지 URL 입력"
                 />
                 <div className="flex items-center space-x-2">
-                  <label className="flex-1 flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer text-sm font-medium">
-                    <ImageIcon size={18} className="mr-2" />
-                    내 컴퓨터에서 선택
+                  <label className="flex-1 flex items-center justify-center px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all cursor-pointer border-2 border-dashed border-gray-300 hover:border-primary group">
+                    <ImageIcon size={18} className="mr-2 text-gray-400 group-hover:text-primary" />
+                    <span className="text-sm font-semibold">내 컴퓨터에서 선택</span>
                     <input 
                       type="file" 
                       className="hidden" 

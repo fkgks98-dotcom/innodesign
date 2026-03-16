@@ -149,23 +149,29 @@ export default function AdminSettings() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">내 컴퓨터에서 사진 선택</label>
-                        <input 
-                          type="file" 
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onloadend = () => {
-                                setHomeData({...homeData, hero: {...homeData.hero, bgImage: reader.result as string}});
-                              };
-                              reader.readAsDataURL(file);
-                            }
-                          }}
-                          className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
-                        />
+                        <div className="flex items-center space-x-3">
+                          <label className="flex-1 flex items-center justify-center px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all cursor-pointer border-2 border-dashed border-gray-300 hover:border-primary group">
+                            <ImageIcon size={20} className="mr-2 text-gray-400 group-hover:text-primary" />
+                            <span className="text-sm font-semibold">파일 탐색기 열기</span>
+                            <input 
+                              type="file" 
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setHomeData({...homeData, hero: {...homeData.hero, bgImage: reader.result as string}});
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
                       </div>
-                      <p className="text-xs text-gray-500">URL을 직접 입력하거나 컴퓨터에서 이미지를 업로드할 수 있습니다.</p>
+                      <p className="text-xs text-gray-500">URL을 직접 입력하거나 위 버튼을 클릭하여 컴퓨터의 이미지를 선택하세요.</p>
                     </div>
                     <div className="aspect-video rounded-2xl overflow-hidden border border-gray-100 shadow-inner bg-gray-50">
                       <img src={homeData.hero.bgImage} alt="Hero Preview" className="w-full h-full object-cover" />
