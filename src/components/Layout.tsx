@@ -13,8 +13,8 @@ export default function Layout() {
           <div className="flex justify-between items-center h-20">
             {/* 로고 */}
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold tracking-tight text-gray-900">
-                INNO<span className="text-primary">DESIGN</span>
+              <span className="text-2xl font-bold tracking-tight text-gray-900 uppercase">
+                Inno Design <span className="text-primary">Co</span>
               </span>
             </Link>
 
@@ -70,7 +70,7 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">INNO<span className="text-primary">DESIGN</span></h3>
+              <h3 className="text-xl font-bold mb-4 uppercase">Inno Design <span className="text-primary">Co</span></h3>
               <p className="text-gray-400 text-sm leading-relaxed">
                 INNOVATION IN SPACE<br />
                 공간에 혁신을 담아내다
@@ -94,7 +94,7 @@ export default function Layout() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} (주)이노디자인. All rights reserved.
+            &copy; {new Date().getFullYear()} Inno Design Co. All rights reserved.
           </div>
         </div>
       </footer>

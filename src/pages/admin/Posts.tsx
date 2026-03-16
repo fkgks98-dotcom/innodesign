@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Image as ImageIcon, X, Upload } from 'lucide-react';
 
 // 샘플 데이터
 const INITIAL_POSTS = [
-  { id: 1, title: '모던 미니멀리즘 아파트', category: '주거공간', date: '2023-10-25', status: '발행됨' },
-  { id: 2, title: '프리미엄 오피스 라운지', category: '상업공간', date: '2023-10-20', status: '발행됨' },
-  { id: 3, title: '오래된 주택의 재탄생', category: '리모델링', date: '2023-10-15', status: '초안' },
-  { id: 4, title: '자연을 품은 전원주택', category: '신축', date: '2023-10-05', status: '발행됨' },
+  { id: 1, title: '모던 미니멀리즘 아파트', category: '주거공간', date: '2023-10-25', status: '발행됨', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800', images: [] },
+  { id: 2, title: '프리미엄 오피스 라운지', category: '상업공간', date: '2023-10-20', status: '발행됨', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800', images: [] },
+  { id: 3, title: '오래된 주택의 재탄생', category: '리모델링', date: '2023-10-15', status: '초안', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800', images: [] },
+  { id: 4, title: '자연을 품은 전원주택', category: '신축', date: '2023-10-05', status: '발행됨', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800', images: [] },
 ];
 
 export default function AdminPosts() {
@@ -29,12 +29,22 @@ export default function AdminPosts() {
   };
 
   const handleEdit = (post: any) => {
-    setCurrentPost(post);
+    setCurrentPost({
+      ...post,
+      images: post.images || []
+    });
     setIsEditing(true);
   };
 
   const handleCreate = () => {
-    setCurrentPost({ title: '', category: '주거공간', content: '', image: '', status: '발행됨' });
+    setCurrentPost({ 
+      title: '', 
+      category: '주거공간', 
+      content: '', 
+      image: '', 
+      images: [], 
+      status: '발행됨' 
+    });
     setIsEditing(true);
   };
 
@@ -47,58 +57,105 @@ export default function AdminPosts() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentPost) return;
+
     let newPosts;
     if (currentPost.id) {
       newPosts = posts.map(p => p.id === currentPost.id ? { ...p, ...currentPost } : p);
     } else {
-      newPosts = [{ ...currentPost, id: Date.now(), date: new Date().toISOString().split('T')[0] }, ...posts];
+      newPosts = [{ 
+        ...currentPost, 
+        id: Date.now(), 
+        date: new Date().toISOString().split('T')[0] 
+      }, ...posts];
     }
     saveToLocalStorage(newPosts);
     setIsEditing(false);
+    alert('저장되었습니다.');
+  };
+
+  const handleMultipleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const fileList = Array.from(files) as File[];
+      const promises = fileList.map(file => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+      });
+
+      Promise.all(promises).then(results => {
+        setCurrentPost(prev => ({
+          ...prev,
+          images: [...(prev.images || []), ...results]
+        }));
+      });
+    }
+  };
+
+  const removeGalleryImage = (index: number) => {
+    const newImages = currentPost.images.filter((_: any, i: number) => i !== index);
+    setCurrentPost({ ...currentPost, images: newImages });
   };
 
   if (isEditing) {
     return (
-      <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="space-y-6 max-w-5xl mx-auto pb-20">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">{currentPost?.id ? '게시글 수정' : '새 게시글 작성'}</h1>
           <button 
             onClick={() => setIsEditing(false)}
-            className="text-gray-500 hover:text-gray-900 px-4 py-2"
+            className="text-gray-500 hover:text-gray-900 px-4 py-2 font-medium"
           >
             취소
           </button>
         </div>
 
-        <form onSubmit={handleSave} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">제목</label>
-            <input 
-              type="text" 
-              value={currentPost?.title}
-              onChange={(e) => setCurrentPost({...currentPost, title: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              placeholder="게시글 제목을 입력하세요"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSave} className="space-y-6">
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
-              <select 
-                value={currentPost?.category}
-                onChange={(e) => setCurrentPost({...currentPost, category: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              >
-                <option value="주거공간">주거공간</option>
-                <option value="상업공간">상업공간</option>
-                <option value="리모델링">리모델링</option>
-                <option value="신축">신축</option>
-              </select>
+              <label className="block text-sm font-bold text-gray-700 mb-2">제목</label>
+              <input 
+                type="text" 
+                value={currentPost?.title}
+                onChange={(e) => setCurrentPost({...currentPost, title: e.target.value})}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                placeholder="게시글 제목을 입력하세요"
+                required
+              />
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">카테고리</label>
+                <select 
+                  value={currentPost?.category}
+                  onChange={(e) => setCurrentPost({...currentPost, category: e.target.value})}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                >
+                  <option value="주거공간">주거공간</option>
+                  <option value="상업공간">상업공간</option>
+                  <option value="리모델링">리모델링</option>
+                  <option value="신축">신축</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">상태</label>
+                <select 
+                  value={currentPost?.status}
+                  onChange={(e) => setCurrentPost({...currentPost, status: e.target.value})}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                >
+                  <option value="발행됨">발행됨</option>
+                  <option value="초안">초안</option>
+                </select>
+              </div>
+            </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">대표 이미지</label>
+              <label className="block text-sm font-bold text-gray-700 mb-2">대표 이미지 (목록 노출용)</label>
               <div className="space-y-4">
                 <div className="flex space-x-2">
                   <input 
@@ -115,8 +172,7 @@ export default function AdminPosts() {
                     <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <ImageIcon size={24} className="text-gray-400 group-hover:text-primary" />
                     </div>
-                    <span className="text-sm font-bold text-gray-700">내 컴퓨터에서 사진 선택</span>
-                    <span className="text-xs text-gray-500 mt-1">JPG, PNG, GIF (최대 5MB)</span>
+                    <span className="text-sm font-bold text-gray-700">대표 사진 선택</span>
                     <input 
                       type="file" 
                       className="hidden" 
@@ -142,46 +198,80 @@ export default function AdminPosts() {
                           type="button"
                           onClick={() => setCurrentPost({...currentPost, image: ''})}
                           className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
-                          title="이미지 제거"
                         >
-                          <Trash2 size={14} />
+                          <X size={14} />
                         </button>
                       </>
                     ) : (
                       <div className="text-center p-4">
                         <ImageIcon size={32} className="mx-auto text-gray-300 mb-2" />
-                        <p className="text-xs text-gray-400">이미지 미리보기</p>
+                        <p className="text-xs text-gray-400">대표 이미지 미리보기</p>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* 추가 이미지 갤러리 섹션 */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">상세 사진 갤러리 (여러 장 업로드 가능)</label>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group">
+                    <Upload size={24} className="text-gray-400 group-hover:text-primary mb-2" />
+                    <span className="text-xs font-bold text-gray-500">사진 추가</span>
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*" 
+                      multiple 
+                      onChange={handleMultipleImages}
+                    />
+                  </label>
+                  
+                  {currentPost?.images?.map((img: string, idx: number) => (
+                    <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-gray-100 group">
+                      <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                      <button 
+                        type="button"
+                        onClick={() => removeGalleryImage(idx)}
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500">시공 사례의 상세 사진들을 여러 장 업로드하여 갤러리를 구성할 수 있습니다.</p>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">내용</label>
+              <textarea 
+                value={currentPost?.content}
+                onChange={(e) => setCurrentPost({...currentPost, content: e.target.value})}
+                rows={10}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-y outline-none"
+                placeholder="시공 사례에 대한 상세한 설명을 작성해주세요."
+              ></textarea>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">내용</label>
-            <textarea 
-              value={currentPost?.content}
-              onChange={(e) => setCurrentPost({...currentPost, content: e.target.value})}
-              rows={10}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-y"
-              placeholder="시공 사례에 대한 상세한 설명을 작성해주세요."
-            ></textarea>
-          </div>
-
-          <div className="flex justify-end space-x-4 pt-4 border-t border-gray-100">
+          <div className="flex justify-end space-x-4">
             <button 
               type="button"
-              className="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
+              onClick={() => setIsEditing(false)}
+              className="px-8 py-4 border border-gray-200 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors font-bold"
             >
-              임시저장
+              취소
             </button>
             <button 
               type="submit"
-              className="px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors font-medium shadow-sm"
+              className="px-8 py-4 bg-primary text-white rounded-2xl hover:bg-primary-dark transition-all font-bold shadow-lg hover:shadow-xl active:scale-95"
             >
-              {currentPost?.id ? '수정 완료' : '발행하기'}
+              {currentPost?.id ? '수정 완료' : '게시글 발행'}
             </button>
           </div>
         </form>
